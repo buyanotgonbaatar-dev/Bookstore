@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>НОМ ДЭЛГҮҮР — Онлайн Номын Сан</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1209;
+    --parchment: #f5efe3;
+    --cream: #fdf8f0;
+    --gold: #c9963a;
+    --rust: #9b3a1a;
+    --sage: #4a5e4a;
+    --shadow: rgba(26,18,9,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Crimson Text',serif; background:var(--cream); color:var(--ink); overflow-x:hidden; }
+
+  nav {
+    background:var(--ink); padding:0 2rem;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100; height:64px;
+    border-bottom:3px solid var(--gold);
+  }
+  .logo { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:900; color:var(--gold); text-decoration:none; }
+  .logo span { color:var(--parchment); font-weight:400; font-style:italic; }
+  nav ul { list-style:none; display:flex; gap:2rem; }
+  nav ul a { color:var(--parchment); text-decoration:none; font-size:1.05rem; transition:color .2s; }
+  nav ul a:hover { color:var(--gold); }
+  .nav-cart { background:var(--gold); color:var(--ink); border:none; padding:.5rem 1.2rem; font-family:'Crimson Text',serif; font-size:1rem; font-weight:600; cursor:pointer; transition:background .2s; }
+  .nav-cart:hover { background:#e0aa45; }
+
+  .hero { background:var(--ink); min-height:380px; display:grid; grid-template-columns:1fr 1fr; overflow:hidden; }
+  .hero-text { padding:4rem 3rem 3rem 4rem; display:flex; flex-direction:column; justify-content:center; }
+  .hero-tag { font-size:.85rem; letter-spacing:.25em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
+  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,4vw,3.6rem); font-weight:900; color:var(--parchment); line-height:1.05; margin-bottom:1rem; }
+  .hero h1 em { color:var(--gold); font-style:italic; }
+  .hero p { color:#b8a98a; font-size:1.1rem; line-height:1.7; max-width:400px; margin-bottom:1.8rem; }
+  .hero-btn { display:inline-block; background:var(--gold); color:var(--ink); padding:.8rem 2rem; font-family:'Playfair Display',serif; font-weight:700; font-size:1rem; border:none; cursor:pointer; transition:all .25s; align-self:flex-start; }
+  .hero-btn:hover { background:var(--parchment); transform:translateY(-2px); }
+  .hero-visual { display:flex; align-items:center; justify-content:center; padding:2rem; }
+  .book-stack { display:flex; gap:1rem; align-items:flex-end; animation:float 4s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .book-spine { width:52px; border-radius:3px 0 0 3px; display:flex; flex-direction:column; align-items:center; justify-content:center; writing-mode:vertical-rl; font-family:'Playfair Display',serif; font-size:.7rem; font-weight:700; letter-spacing:.1em; color:rgba(255,255,255,.9); box-shadow:4px 4px 16px rgba(0,0,0,.5); padding:1rem 0; }
+  .b1{height:200px;background:linear-gradient(to right,#7b2d2d,#9b3a1a)}
+  .b2{height:240px;background:linear-gradient(to right,#2d5a3d,#4a5e4a)}
+  .b3{height:180px;background:linear-gradient(to right,#2d3d7b,#3a4a9b)}
+  .b4{height:220px;background:linear-gradient(to right,#7b5a2d,#c9963a)}
+  .b5{height:160px;background:linear-gradient(to right,#5a2d7b,#7b3a9b)}
+
+  .search-section { background:var(--parchment); padding:1.8rem 2rem; border-bottom:1px solid #ddd5c2; }
+  .search-wrap { max-width:600px; margin:0 auto; display:flex; border:2px solid var(--ink); }
+  .search-wrap input { flex:1; padding:.85rem 1.2rem; font-family:'Crimson Text',serif; font-size:1.05rem; border:none; background:white; outline:none; }
+  .search-wrap button { background:var(--ink); color:var(--gold); border:none; padding:0 1.5rem; font-size:1.1rem; cursor:pointer; }
+
+  .categories { padding:1rem 2rem; background:var(--parchment); display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap; border-bottom:2px solid #ddd5c2; }
+  .cat-btn { padding:.4rem 1.1rem; border:1.5px solid var(--ink); background:transparent; font-family:'Crimson Text',serif; font-size:.95rem; cursor:pointer; transition:all .2s; color:var(--ink); }
+  .cat-btn:hover,.cat-btn.active { background:var(--ink); color:var(--gold); }
+
+  .section-title { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; text-align:center; padding:2.5rem 0 .3rem; }
+  .divider { width:60px; height:3px; background:var(--gold); margin:.6rem auto 0; }
+  .section-sub { text-align:center; color:#7a6a50; font-style:italic; font-size:1.05rem; margin-bottom:2rem; }
+
+  .products { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:2rem; padding:1rem 3rem 3rem; max-width:1200px; margin:0 auto; }
+  .product-card { background:white; border:1px solid #e8dfc8; display:flex; flex-direction:column; transition:all .3s; position:relative; overflow:hidden; }
+  .product-card:hover { transform:translateY(-6px); box-shadow:0 16px 40px var(--shadow); border-color:var(--gold); }
+  .badge { position:absolute; top:12px; left:0; background:var(--rust); color:white; font-size:.7rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:.25rem .7rem; }
+  .badge.new { background:var(--sage); }
+  .book-cover { height:240px; display:flex; align-items:center; justify-content:center; background:#f5efe3; }
+  .book-thumb { width:130px; height:190px; border-radius:2px 6px 6px 2px; box-shadow:5px 5px 20px rgba(0,0,0,.25),inset -3px 0 6px rgba(0,0,0,.2); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem .8rem; text-align:center; position:relative; }
+  .book-thumb::before { content:''; position:absolute; left:0; top:0; bottom:0; width:12px; background:rgba(0,0,0,.25); border-radius:2px 0 0 2px; }
+  .title-on-cover { font-family:'Playfair Display',serif; font-size:.78rem; font-weight:700; color:rgba(255,255,255,.95); line-height:1.3; margin-bottom:.5rem; position:relative; z-index:1; }
+  .author-on-cover { font-family:'Crimson Text',serif; font-size:.65rem; color:rgba(255,255,255,.75); font-style:italic; position:relative; z-index:1; }
+  .product-info { padding:1rem 1.2rem 1.2rem; flex:1; display:flex; flex-direction:column; }
+  .product-genre { font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; color:var(--gold); font-weight:600; margin-bottom:.3rem; }
+  .product-title { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--ink); line-height:1.3; margin-bottom:.25rem; }
+  .product-author { font-style:italic; color:#7a6a50; font-size:.9rem; margin-bottom:.6rem; }
+  .stars { color:var(--gold); font-size:.85rem; margin-bottom:.5rem; }
+  .stars span { color:#9a8a6a; font-size:.8rem; margin-left:.3rem; }
+  .product-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:.8rem; border-top:1px solid #e8dfc8; }
+  .price { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--rust); }
+  .old-price { font-size:.85rem; text-decoration:line-through; color:#aaa; margin-left:.3rem; }
+  .add-btn { background:var(--ink); color:var(--gold); border:none; padding:.5rem 1rem; font-family:'Crimson Text',serif; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .add-btn:hover { background:var(--gold); color:var(--ink); }
+
+  .empty-msg { text-align:center; padding:4rem; color:#9a8a6a; font-style:italic; font-size:1.2rem; display:none; }
+
+  .promo { background:var(--rust); color:var(--parchment); text-align:center; padding:2.5rem 2rem; margin:0 3rem 3rem; position:relative; overflow:hidden; }
+  .promo h2 { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; margin-bottom:.5rem; }
+  .promo p { font-size:1.1rem; opacity:.85; margin-bottom:1.2rem; }
+  .promo-btn { background:var(--parchment); color:var(--rust); padding:.7rem 2rem; font-family:'Playfair Display',serif; font-weight:700; border:none; cursor:pointer; font-size:1rem; }
+
+  footer { background:var(--ink); color:#b8a98a; padding:3rem 4rem 2rem; display:grid; grid-template-columns:2fr 1fr 1fr; gap:3rem; border-top:3px solid var(--gold); }
+  footer h3 { font-family:'Playfair Display',serif; color:var(--gold); font-size:1.1rem; margin-bottom:1rem; }
+  footer p { font-size:.95rem; line-height:1.7; }
+  footer ul { list-style:none; }
+  footer ul li { margin-bottom:.5rem; }
+  footer ul a { color:#b8a98a; text-decoration:none; font-size:.95rem; }
+  footer ul a:hover { color:var(--gold); }
+  .footer-bottom { background:var(--ink); text-align:center; padding:1rem; color:#5a4a32; font-size:.85rem; border-top:1px solid #2a1f10; }
+
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--sage); color:white; padding:1rem 1.5rem; font-family:'Crimson Text',serif; font-size:1rem; border-left:4px solid var(--gold); box-shadow:0 8px 24px rgba(0,0,0,.2); transform:translateX(120%); transition:transform .3s; z-index:999; }
+  .toast.show { transform:translateX(0); }
+
+  @media(max-width:768px){
+    .hero{grid-template-columns:1fr}
+    .hero-visual{display:none}
+    .products{padding:1rem 1rem 2rem;gap:1rem}
+    .promo{margin:0 1rem 2rem}
+    footer{grid-template-columns:1fr;gap:1.5rem;padding:2rem}
+    nav ul{display:none}
+  }
+
+  /* Color classes */
+  .c1{background:linear-gradient(135deg,#7b2d2d,#c0392b)}
+  .c2{background:linear-gradient(135deg,#1a3a5c,#2980b9)}
+  .c3{background:linear-gradient(135deg,#2d5a3d,#27ae60)}
+  .c4{background:linear-gradient(135deg,#5a2d7b,#8e44ad)}
+  .c5{background:linear-gradient(135deg,#7b5a2d,#e67e22)}
+  .c6{background:linear-gradient(135deg,#1a1a2e,#16213e)}
+  .c7{background:linear-gradient(135deg,#2c3e50,#4ca1af)}
+  .c8{background:linear-gradient(135deg,#833ab4,#fd1d1d)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">НОМ<span>дэлгүүр</span></a>
+  <ul>
+    <li><a href="#">Нүүр</a></li>
+    <li><a href="#books">Номууд</a></li>
+    <li><a href="#">Холбоо барих</a></li>
+  </ul>
+  <button class="nav-cart" onclick="showToast('Таны сагс хоосон байна')">🛒 Сагс <span id="cart-count">(0)</span></button>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-tag">Монголын шилдэг номын дэлгүүр</div>
+    <h1>Мэдлэгийн <em>ертөнц</em> таны гарт</h1>
+    <p>Уран зохиол, шинжлэх ухаан, түүх, философи — таны хайж буй ном манайд байна.</p>
+    <button class="hero-btn" onclick="document.getElementById('books').scrollIntoView({behavior:'smooth'})">Номуудыг үзэх →</button>
+  </div>
+  <div class="hero-visual">
+    <div class="book-stack">
+      <div class="book-spine b1">Уран зохиол</div>
+      <div class="book-spine b2">Байгаль</div>
+      <div class="book-spine b3">Түүх</div>
+      <div class="book-spine b4">Соёл</div>
+      <div class="book-spine b5">Яруу найраг</div>
+    </div>
+  </div>
+</section>
+
+<div class="search-section">
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Номын нэр, зохиогч хайх..." oninput="filterBooks()">
+    <button>🔍</button>
+  </div>
+</div>
+
+<div class="categories">
+  <button class="cat-btn active" onclick="filterCat(this,'all')">Бүх ном</button>
+  <button class="cat-btn" onclick="filterCat(this,'uran')">Уран зохиол</button>
+  <button class="cat-btn" onclick="filterCat(this,'tuuh')">Түүх</button>
+  <button class="cat-btn" onclick="filterCat(this,'erdem')">Эрдэм шинжилгээ</button>
+  <button class="cat-btn" onclick="filterCat(this,'huu')">Хүүхдийн</button>
+  <button class="cat-btn" onclick="filterCat(this,'mongol')">Монгол зохиол</button>
+</div>
+
+<h2 class="section-title" id="books">Онцлох номууд</h2>
+<div class="divider"></div>
+<p class="section-sub">Хамгийн их уншигдаж буй номуудаас сонгоорой</p>
+
+<div class="products" id="productsGrid"></div>
+<div class="empty-msg" id="emptyMsg">Ном олдсонгүй 😔</div>
+
+<div class="promo">
+  <h2>📚 10-аас дээш ном захиалбал 20% хямдрал!</h2>
+  <p>Сургуулийн номын сан, байгууллагуудад тусгай үнэ санал болгож байна</p>
+  <button class="promo-btn">Холбоо барих</button>
+</div>
+
+<footer>
+  <div>
+    <h3>НОМдэлгүүр</h3>
+    <p>Монголын хамгийн том онлайн номын дэлгүүр. Бид 10,000 гаруй номын сонголттой, хурдан хүргэлттэй, найдвартай үйлчилгээ үзүүлж байна.</p>
+    <br>
+    <p>📍 Улаанбаатар хот<br>📞 +976 7700-0000<br>✉️ info@nomdeleguur.mn</p>
+  </div>
+  <div>
+    <h3>Холбоосууд</h3>
+    <ul>
+      <li><a href="#">Нүүр хуудас</a></li>
+      <li><a href="#books">Бүх номууд</a></li>
+      <li><a href="#">Хямдрал</a></li>
+      <li><a href="#">Бидний тухай</a></li>
+    </ul>
+  </div>
+  <div>
+    <h3>Үйлчилгээ</h3>
+    <ul>
+      <li><a href="#">Захиалга хийх</a></li>
+      <li><a href="#">Хүргэлт</a></li>
+      <li><a href="#">Буцаалт</a></li>
+      <li><a href="#">Нэвтрэх</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">© 2026 НОМдэлгүүр. Бүх эрх хуулиар хамгаалагдсан.</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS = ['c1','c2','c3','c4','c5','c6','c7','c8'];
+let cartCount = 0;
+let currentCat = 'all';
+
+const DEFAULT_BOOKS = [
+  {id:1, title:'Монголын Нууц Товчоо', author:'Арди зохиол', genre:'mongol', cat:'mongol', price:25000, oldPrice:32000, badge:'Шилдэг', stars:5, reviews:128, color:'c1'},
+  {id:2, title:'Гурван Замын Уулзвар', author:'Б. Явуухулан', genre:'uran', cat:'uran', price:18000, oldPrice:0, badge:'Шинэ', stars:4, reviews:87, color:'c2'},
+  {id:3, title:'Чингис Хааны Түүх', author:'Д. Мягмар', genre:'tuuh', cat:'tuuh', price:22000, oldPrice:28000, badge:'', stars:5, reviews:214, color:'c3'},
+  {id:4, title:'Оюун Ухааны Гүн', author:'С. Пүрэвдорж', genre:'erdem', cat:'erdem', price:28000, oldPrice:0, badge:'Шинэ', stars:4, reviews:43, color:'c4'},
+  {id:5, title:'Аав Аавдаа Захидал', author:'Г. Аюурзана', genre:'huu', cat:'huu', price:12000, oldPrice:15000, badge:'', stars:5, reviews:96, color:'c5'},
+  {id:6, title:'Цөлийн Цэцэг', author:'Д. Нямаа', genre:'uran', cat:'uran', price:16000, oldPrice:0, badge:'Шилдэг', stars:4, reviews:61, color:'c6'},
+  {id:7, title:'Нүүдэлчдийн Нийгэм', author:'Б. Энхтөр', genre:'tuuh', cat:'tuuh', price:20000, oldPrice:25000, badge:'', stars:5, reviews:75, color:'c7'},
+  {id:8, title:'Хөх Тэнгэрийн Доор', author:'Ч. Лодойдамба', genre:'mongol', cat:'mongol', price:19000, oldPrice:0, badge:'Шинэ', stars:5, reviews:183, color:'c8'},
+];
+
+function getBooks() {
+  const saved = localStorage.getItem('nom_books');
+  return saved ? JSON.parse(saved) : DEFAULT_BOOKS;
+}
+
+function starsHTML(n) {
+  return '★'.repeat(n) + '☆'.repeat(5-n);
+}
+
+function renderBooks() {
+  const books = getBooks();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const grid = document.getElementById('productsGrid');
+  const empty = document.getElementById('emptyMsg');
+  grid.innerHTML = '';
+  let count = 0;
+  books.forEach(b => {
+    const matchCat = currentCat === 'all' || b.cat === currentCat;
+    const matchSearch = b.title.toLowerCase().includes(search) || b.author.toLowerCase().includes(search);
+    if (!matchCat || !matchSearch) return;
+    count++;
+    grid.innerHTML += `
+      <div class="product-card">
+        ${b.badge ? `<span class="badge${b.badge==='Шинэ'?' new':''}">${b.badge}</span>` : ''}
+        <div class="book-cover">
+          <div class="book-thumb ${b.color||'c1'}">
+            <div class="title-on-cover">${b.title}</div>
+            <div class="author-on-cover">${b.author}</div>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-genre">${b.genre}</div>
+          <div class="product-title">${b.title}</div>
+          <div class="product-author">${b.author}</div>
+          <div class="stars">${starsHTML(b.stars)} <span>(${b.reviews})</span></div>
+          <div class="product-footer">
+            <div><span class="price">₮${b.price.toLocaleString()}</span>${b.oldPrice?`<span class="old-price">₮${b.oldPrice.toLocaleString()}</span>`:''}</div>
+            <button class="add-btn" onclick="addCart('${b.title}')">+ Сагс</button>
+          </div>
+        </div>
+      </div>`;
+  });
+  empty.style.display = count === 0 ? 'block' : 'none';
+}
+
+function filterCat(btn, cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCat = cat;
+  renderBooks();
+}
+
+function filterBooks() { renderBooks(); }
+
+function addCart(name) {
+  cartCount++;
+  document.getElementById('cart-count').textContent = '(' + cartCount + ')';
+  showToast('✓ "' + name + '" сагсанд нэмэгдлээ');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Listen for storage changes from admin panel
+window.addEventListener('storage', () => renderBooks());
+
+renderBooks();
+</script>
+</body>
+</html>
